@@ -18,7 +18,7 @@ import {
   FaMotorcycle,
   FaArrowLeft
 } from 'react-icons/fa';
-import { subscribeToOrderTrackingDb } from '../../supabase/database';
+import { subscribeToOrderTrackingDb } from '../../firebase/database';
 import DeliveryMap from '../../components/common/DeliveryMap';
 
 export const OrderDetails = () => {
@@ -142,6 +142,30 @@ export const OrderDetails = () => {
           </span>
         </div>
 
+        {/* Delivery PIN Card */}
+        {order.status !== 'delivered' && order.status !== 'cancelled' && (() => {
+          const pin = order.deliveryPin || order.delivery_pin || (() => {
+            const idStr = order.id || '';
+            let hash = 0;
+            for (let i = 0; i < idStr.length; i++) {
+              hash = idStr.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            return (Math.abs(hash % 9000) + 1000).toString();
+          })();
+          
+          return (
+            <div className="p-4 bg-secondary/10 border border-secondary/25 rounded-2xl flex justify-between items-center text-xs shadow-sm">
+              <div className="flex flex-col gap-0.5 text-left">
+                <span className="text-[9px] font-black text-neutral-dark/50 uppercase tracking-wider">Delivery Verification PIN</span>
+                <span className="text-[10.5px] font-bold text-neutral-dark mt-0.5 leading-snug">Share this PIN with the rider when they arrive</span>
+              </div>
+              <span className="text-base font-black text-neutral-dark bg-white border border-secondary/40 px-3 py-1.5 rounded-xl tracking-widest font-mono select-all shadow-sm">
+                {pin}
+              </span>
+            </div>
+          );
+        })()}
+
         {/* Micro Stepper Progress */}
         <div className="flex justify-between items-center px-1 py-1.5 bg-neutral-light/45 border border-neutral-border/40 rounded-md relative mb-1">
           {steps.slice(0, 5).map((step, idx) => (
@@ -164,12 +188,12 @@ export const OrderDetails = () => {
         {order.riderId ? (
           <div className="flex items-center justify-between p-4 bg-white border border-neutral-border rounded-lg shadow-xs">
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-full bg-secondary-light border border-secondary/20 flex items-center justify-center text-secondary-dark text-lg font-black shadow-xs">
-                SR
+              <div className="w-11 h-11 rounded-full bg-secondary-light border border-secondary/20 flex items-center justify-center text-secondary-dark text-lg font-black shadow-xs uppercase">
+                {order.riderName ? order.riderName.substring(0, 2) : 'R'}
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs font-extrabold text-neutral-dark">Super Rider</span>
+                  <span className="text-xs font-extrabold text-neutral-dark">{order.riderName || 'Delivery Partner'}</span>
                   <span className="flex items-center gap-0.5 text-[9px] font-extrabold text-amber-500 bg-amber-50 px-1.5 py-0.5 rounded-md border border-amber-100">
                     <FaStar className="text-[8px]" /> 4.9
                   </span>
@@ -179,7 +203,7 @@ export const OrderDetails = () => {
             </div>
             
             <a 
-              href={`tel:${order.customerPhone || '9876543211'}`} 
+              href={`tel:${order.riderPhone || ''}`} 
               className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 active:scale-95 text-white flex items-center justify-center transition-all shadow-md cursor-pointer text-sm"
             >
               <FaPhoneAlt />
@@ -212,9 +236,18 @@ export const OrderDetails = () => {
           {showItems && (
             <div className="px-4 pb-4 border-t border-neutral-border/50 bg-neutral-light/5 pt-3 flex flex-col gap-2.5">
               {order.items?.map((item, index) => (
-                <div key={index} className="flex justify-between text-xs font-semibold text-neutral-dark">
-                  <span className="opacity-85">{item.name} <span className="opacity-55 text-[10px]">x {item.quantity}</span></span>
-                  <span className="font-bold">{formatPrice(item.price * item.quantity)}</span>
+                <div key={index} className="flex flex-col text-xs font-semibold text-neutral-dark">
+                  <div className="flex justify-between">
+                    <span className="opacity-85">
+                      {item.name} <span className="opacity-55 text-[10px] ml-1">x {item.quantity}</span>
+                    </span>
+                    <span className="font-bold">{formatPrice(item.price * item.quantity)}</span>
+                  </div>
+                  {item.cuttingType && (
+                    <span className="text-[9px] text-[#8B0000] font-black uppercase tracking-wide mt-0.5 ml-2">
+                      ✂️ {item.cuttingType}
+                    </span>
+                  )}
                 </div>
               ))}
               <div className="border-t border-neutral-border/50 my-1 pt-2 flex justify-between items-center text-xs font-extrabold text-neutral-dark">

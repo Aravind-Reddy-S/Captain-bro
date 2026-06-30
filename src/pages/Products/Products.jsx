@@ -13,6 +13,7 @@ export const Products = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
+  const [expandedCategories, setExpandedCategories] = useState({});
 
   const categoryParam = searchParams.get('category');
 
@@ -59,7 +60,13 @@ export const Products = () => {
 
   const filteredProducts = products.filter((product) => {
     const activeCategories = categoryParam ? categoryParam.split(',') : [];
-    const matchesCategory = !categoryParam || activeCategories.includes(product.category);
+    let matchesCategory = false;
+    if (activeCategories.includes('our-products')) {
+      const idNum = parseInt(product.id?.substring(1) || '0');
+      matchesCategory = product.id?.startsWith('p') && idNum >= 40 && idNum <= 99;
+    } else {
+      matchesCategory = !categoryParam || activeCategories.includes(product.category);
+    }
     const matchesSearch = !searchQuery ||
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -145,8 +152,20 @@ export const Products = () => {
       ) : !categoryParam && !searchQuery ? (
         <div className="flex flex-col gap-6">
           {CATEGORIES.map((cat) => {
-            const catProducts = products.filter(p => p.category === cat.id);
+            const catProducts = cat.id === 'our-products'
+              ? products.filter(p => {
+                  const idNum = parseInt(p.id?.substring(1) || '0');
+                  return p.id?.startsWith('p') && idNum >= 40 && idNum <= 54;
+                })
+              : products.filter(p => {
+                  const idNum = parseInt(p.id?.substring(1) || '0');
+                  const isOurProduct = p.id?.startsWith('p') && idNum >= 40 && idNum <= 54;
+                  return p.category === cat.id && !isOurProduct;
+                });
             if (catProducts.length === 0) return null;
+            const isExpanded = expandedCategories[cat.id];
+            const displayedProducts = isExpanded ? catProducts : catProducts.slice(0, 4);
+
             return (
               <div key={cat.id} className="flex flex-col gap-3">
                 <div className="flex justify-between items-center px-1">
@@ -161,10 +180,18 @@ export const Products = () => {
                   </button>
                 </div>
                 <div className="grid grid-cols-2 gap-3 p-1">
-                  {catProducts.map((product) => (
+                  {displayedProducts.map((product) => (
                     <ProductCard key={product.id} product={product} />
                   ))}
                 </div>
+                {catProducts.length > 4 && (
+                  <button
+                    onClick={() => setExpandedCategories(prev => ({ ...prev, [cat.id]: !isExpanded }))}
+                    className="w-full py-2.5 bg-white border border-neutral-border hover:bg-neutral-light text-xs font-black text-primary rounded-lg shadow-sm transition-all active:scale-95 flex items-center justify-center gap-1.5"
+                  >
+                    {isExpanded ? 'See Less' : `See More (${catProducts.length - 4} More)`}
+                  </button>
+                )}
               </div>
             );
           })}

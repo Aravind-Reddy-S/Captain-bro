@@ -1,6 +1,7 @@
 export const ROLES = {
   CUSTOMER: 'customer',
   ADMIN: 'admin',
+  SUPER_ADMIN: 'super_admin',
   RIDER: 'rider'
 };
 
@@ -14,12 +15,14 @@ export const ORDER_STATUS = {
 };
 
 export const CATEGORIES = [
+  { id: 'our-products', name: "Our\nProducts", image: 'fooditems.png' },
+  { id: 'fruits', name: "Fresh\nFruits", image: 'fruits-category.png' },
+  { id: 'vegetables', name: "Fresh\nVegetables", image: 'onions.png' },
   { id: 'chicken', name: 'Fresh Chicken', image: 'chicken-category.png' },
   { id: 'mutton', name: 'Premium Mutton', image: 'mutton-category.png' },
   { id: 'fish', name: "Fresh\nFishes", image: 'fish-category.png' },
   { id: 'prawns', name: 'Fresh Prawns', image: 'prawns-category.png' },
-  { id: 'vegetables', name: "Fresh\nVegetables", image: 'onions.png' },
-  { id: 'fruits', name: "Fresh\nFruits", image: 'fruits-category.png' },
+  { id: 'pickles', name: "Homemade\nPickles", image: 'pickles-category.png' },
   { id: 'grocery', name: 'Daily Grocery', image: 'cooking-oil.png' }
 ];
 
@@ -234,17 +237,6 @@ export const MOCK_PRODUCTS = [
     rating: 4.8
   },
   {
-    id: 'p20',
-    name: 'Crispy Chicken Wings',
-    category: 'chicken',
-    price: 180,
-    weight: '500g',
-    description: 'Fresh, meaty chicken wings with skin. Perfect for snacks, starters, and bar bites.',
-    image: 'chicken-wings.png',
-    inStock: true,
-    rating: 4.7
-  },
-  {
     id: 'p21',
     name: 'Mutton Boneless Cuts',
     category: 'mutton',
@@ -397,5 +389,236 @@ export const MOCK_PRODUCTS = [
     image: 'thick-curd.png',
     inStock: true,
     rating: 4.8
+  },
+  {
+    id: 'p36',
+    name: 'Traditional Mango Pickle (Avakaya)',
+    category: 'pickles',
+    price: 180,
+    weight: '250g',
+    description: 'Authentic homemade spicy mango pickle made with premium cold-pressed sesame oil, Guntur red chillies, and handpicked green mangoes.',
+    image: 'mango-pickle.png',
+    inStock: true,
+    rating: 4.8
+  },
+  {
+    id: 'p37',
+    name: 'Spicy Tomato Pickle',
+    category: 'pickles',
+    price: 120,
+    weight: '250g',
+    description: 'Tangy and fiery homemade tomato pickle cooked to perfection with mustard seeds, garlic, and traditional local spices.',
+    image: 'tomato-pickle.png',
+    inStock: true,
+    rating: 4.7
+  },
+  {
+    id: 'p38',
+    name: 'Special Chicken Pickle',
+    category: 'pickles',
+    price: 290,
+    weight: '250g',
+    description: 'Delectable homemade boneless chicken pickle, deep-fried and marinated in a rich, spicy, and tangy masala blend.',
+    image: 'chicken-pickle.png',
+    inStock: true,
+    rating: 4.9
+  },
+  {
+    id: 'p39',
+    name: 'Fresh Chicken Skin',
+    category: 'chicken',
+    price: 120,
+    weight: '500g',
+    description: 'Freshly prepared and cleaned chicken skin, rich in flavor. Perfect for making crispy chicken skin snacks, cracklings, or rendering schmaltz.',
+    image: 'chicken-skin.png',
+    inStock: true,
+    rating: 4.8
+  },
+  {
+    id: 'p40',
+    name: 'Chilli Powder',
+    category: 'grocery',
+    price: 145,
+    weight: '500g',
+    description: '100% pure and natural chilli powder made from premium 341 type chillies. Naturally dried with no added preservatives or colors.',
+    image: 'captain-bro-chilli-powder.png',
+    inStock: true,
+    rating: 4.9
+  },
+  {
+    id: 'p41',
+    name: 'Turmeric Powder',
+    category: 'grocery',
+    price: 135,
+    weight: '500g',
+    description: '100% pure and natural turmeric powder made from premium quality turmeric roots. Naturally dried with no added preservatives or colors.',
+    image: 'captain-bro-turmeric-powder.png',
+    inStock: true,
+    rating: 4.9
+  },
+  {
+    id: 'p42',
+    name: 'Dhanaya Powder',
+    category: 'grocery',
+    price: 125,
+    weight: '500g',
+    description: '100% pure and natural coriander powder (dhanaya powder) made from premium quality coriander seeds. Naturally dried with no added preservatives or colors.',
+    image: 'captain-bro-dhanaya-powder.png',
+    inStock: true,
+    rating: 4.8
+  },
+  {
+    id: 'p43',
+    name: 'Natural Sugar Deshi',
+    category: 'grocery',
+    price: 95,
+    weight: '500g',
+    description: '100% organic, unrefined and natural brown deshi sugar sourced from premium sugarcane farms. No chemical processing, rich in minerals, authentic sweet taste.',
+    image: 'captain-bro-natural-sugar.png',
+    inStock: true,
+    rating: 4.9
+  },
+  {
+    id: 'p44',
+    name: 'Natural Jaggery (Bellam)',
+    category: 'grocery',
+    price: 110,
+    weight: '500g',
+    description: '100% natural and premium quality jaggery (bellam). Processed traditionally with no chemical clarification or artificial additives. Rich in minerals and iron.',
+    image: 'captain-bro-natural-jaggery.png',
+    inStock: true,
+    rating: 4.9
+  },
+  {
+    id: 'p45',
+    name: 'General Gravy Powder',
+    category: 'grocery',
+    price: 195,
+    weight: '250g',
+    description: '100% pure and natural premium gravy powder made with cashews, almonds, watermelon seeds, pumpkin seeds, and melon seeds imported from Kerala farmers. No added powder, only premium whole spices. Perfect base for chicken, mutton, or paneer gravies.',
+    image: 'captain-bro-general-gravy.png',
+    inStock: true,
+    rating: 4.9
+  },
+  {
+    id: 'p46',
+    name: 'Kerala Natural Masala Powder',
+    category: 'grocery',
+    price: 165,
+    weight: '250g',
+    description: '100% pure and natural traditional spice masala powder imported from Kerala farmers. Pure spices, pure taste. Excellent spice mix for chicken, mutton, or paneer gravies.',
+    image: 'captain-bro-kerala-masala.png',
+    inStock: true,
+    rating: 4.9
+  },
+  {
+    id: 'p47',
+    name: 'Dry Fruits Mix Milk Shake Powder',
+    category: 'grocery',
+    price: 240,
+    weight: '250g',
+    description: 'A premium dry fruits mix milk shake powder made with 100% natural ingredients including almonds, cashews, pistachios, walnuts, dates, figs, and oats. No artificial flavors, preservatives, or added sugar.',
+    image: 'captain-bro-milkshake-powder.png',
+    inStock: true,
+    rating: 4.9
+  },
+  {
+    id: 'p48',
+    name: 'Natural Face Pack',
+    category: 'grocery',
+    price: 180,
+    weight: '100g',
+    description: 'Our Natural Face Pack for Brightness is a powerful blend of 100% pure herbs and natural ingredients like Multani Mitti, Sandalwood, Turmeric, Neem, Rose Petals, Almonds, and Saffron.',
+    image: 'captain-bro-face-pack.png',
+    inStock: true,
+    rating: 4.9
+  },
+  {
+    id: 'p49',
+    name: 'Premium Dry Fruits Mix',
+    category: 'grocery',
+    price: 295,
+    weight: '250g',
+    description: 'A premium mix of handpicked dry fruits, nuts, and seeds. Contains almonds, cashews, pistachios, walnuts, raisins, cranberries, dates, tutti frutti, pumpkin seeds, sunflower seeds, and melon seeds.',
+    image: 'captain-bro-dryfruits-mix.png',
+    inStock: true,
+    rating: 4.9
+  },
+  {
+    id: 'p50',
+    name: 'Natural Face Pack for Men',
+    category: 'grocery',
+    price: 195,
+    weight: '100g',
+    description: 'Our Natural Face Pack for Men is a powerful blend of 100% pure herbs and natural ingredients like Multani Mitti, Sandalwood, Turmeric, Neem, Aloe Vera, Bamboo Charcoal, and Rose Petal.',
+    image: 'captain-bro-face-pack-men.png',
+    inStock: true,
+    rating: 4.9
+  },
+  {
+    id: 'p51',
+    name: 'Natural Face Pack for Kids',
+    category: 'grocery',
+    price: 195,
+    weight: '100g',
+    description: 'Our Natural Face Pack for Kids is a gentle blend of 100% natural herbs and ingredients specially chosen for kids\' delicate skin. Helps to brighten, nourish and keep skin soft, smooth and healthy.',
+    image: 'captain-bro-face-pack-kids.png',
+    inStock: true,
+    rating: 4.9
+  },
+  {
+    id: 'p52',
+    name: 'Protein Shake Powder',
+    category: 'grocery',
+    price: 280,
+    weight: '250g',
+    description: 'A premium blend of 100% natural ingredients for strength, energy, and muscle health. Made with pea protein, brown rice protein, natural cocoa, oats, flax seeds, and chia seeds.',
+    image: 'captain-bro-protein-shake.png',
+    inStock: true,
+    rating: 4.9
+  },
+  {
+    id: 'p53',
+    name: 'Wood Pressed Groundnut Oil',
+    category: 'grocery',
+    price: 175,
+    weight: '250ml',
+    description: '100% original, wood-pressed groundnut oil extracted naturally from premium peanuts. Naturally rich in nutrients, no added preservatives, zero trans fat.',
+    image: 'captain-bro-groundnut-oil-250.jpg',
+    inStock: true,
+    rating: 4.9
+  },
+  {
+    id: 'p54',
+    name: 'Wood Pressed Groundnut Oil (500ml)',
+    category: 'grocery',
+    price: 320,
+    weight: '500ml',
+    description: '100% original, wood-pressed groundnut oil extracted naturally from premium peanuts. Packaged in a premium glass bottle with an easy pourer cap.',
+    image: 'captain-bro-groundnut-oil-500.png',
+    inStock: true,
+    rating: 4.9
+  },
+  {
+    id: 'p55',
+    name: 'Captain Bro Wood Pressed Groundnut Oil (1000ml)',
+    category: 'grocery',
+    price: 590,
+    weight: '1000ml',
+    description: '100% original, wood-pressed groundnut oil extracted naturally from premium peanuts. Loaded with natural antioxidants, nutrients, and a high smoke point. No preservatives.',
+    image: 'captain-bro-groundnut-oil-1000.jpg',
+    inStock: true,
+    rating: 4.9
+  },
+  {
+    id: 'p56',
+    name: 'Captain Bro Natural Face Pack for Women',
+    category: 'grocery',
+    price: 195,
+    weight: '100g',
+    description: 'Our Natural Face Pack for Women is a powerful blend of 100% pure herbs and natural ingredients. It brightens skin naturally, evens skin tone, deeply cleanses, reduces dark spots, and is suitable for all skin types.',
+    image: 'captain-bro-face-pack.jpg',
+    inStock: true,
+    rating: 4.9
   }
 ];

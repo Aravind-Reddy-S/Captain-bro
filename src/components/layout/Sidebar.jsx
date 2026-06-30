@@ -45,10 +45,12 @@ export const Sidebar = ({ isOpen, onClose }) => {
             <span>My Profile</span>
           </NavLink>
 
-          {currentUser && currentUser.role === 'admin' && (
+          {currentUser && (currentUser.role === 'admin' || currentUser.role === 'super_admin') && (
             <>
               <div className="h-px bg-neutral-border my-2"></div>
-              <span className="text-[10px] font-bold text-neutral-dark opacity-40 px-3 uppercase tracking-wider">Admin</span>
+              <span className="text-[10px] font-bold text-neutral-dark opacity-40 px-3 uppercase tracking-wider">
+                {currentUser.role === 'super_admin' ? 'Super Admin' : 'Admin'}
+              </span>
               <NavLink to="/admin" onClick={onClose} className="flex items-center gap-3 p-3 rounded-xl hover:bg-neutral-light font-semibold text-neutral-dark text-sm transition-all">
                 <FaClipboardList className="text-secondary-dark text-base" />
                 <span>Admin Dashboard</span>

@@ -18,6 +18,7 @@ import FoodItems from "../../assets/images/fooditems.png";
 import GroceriesImg from "../../assets/images/groceriesImg.png";
 import CloudKitImg from "../../assets/images/CloudKitImg.png";
 import CloudKitchenBanner from "../../assets/images/CloudKitchenBanner.png";
+import MedicineSection from '../../components/common/MedicineSection';
 
 export const Home = () => {
   const navigate = useNavigate();
@@ -92,13 +93,19 @@ export const Home = () => {
     navigate(`/products?category=${categoryId}`);
   };
 
-  const filteredProducts = products
-    .filter(p => !activeCategory || p.category === activeCategory)
-    .slice(0, 2); // Show top 4 best sellers
+  const recommendedIds = ['p40', 'p45', 'p1', 'p54'];
+  const mappedRecommendations = recommendedIds
+    .map(id => products.find(p => p.id === id))
+    .filter(Boolean);
+
+  const filteredProducts = activeCategory
+    ? products.filter(p => p.category === activeCategory).slice(0, 4)
+    : (mappedRecommendations.length > 0 ? mappedRecommendations : products.slice(0, 4));
 
   const vegetables = products.filter(p => p.category === 'vegetables');
   const fruits = products.filter(p => p.category === 'fruits');
   const groceries = products.filter(p => p.category === 'grocery');
+  const captainBroProducts = products.filter(p => p.name?.toLowerCase().includes('captain bro'));
 
   const autocompleteSuggestions = searchQuery.trim()
     ? products.filter(p => {
@@ -260,7 +267,7 @@ export const Home = () => {
             Shop by Category
           </h3>
           <button
-            onClick={() => navigate('/products')}
+            onClick={() => navigate('/categories')}
             className="text-xs font-bold text-primary flex items-center gap-0.5 hover:underline"
           >
             See All <FaChevronRight className="text-[10px]" />
@@ -269,28 +276,28 @@ export const Home = () => {
 
         <div className="grid grid-cols-2 gap-3.5">
           {/* Card 1: Fresh Meat */}
+
           <div
-            onClick={() => navigate('/products?category=chicken,mutton,fish,prawns')}
+            onClick={() => navigate('/products?category=our-products')}
             className="flex flex-col items-center group cursor-pointer"
           >
-            <div className="w-full aspect-square rounded-xl border border-neutral-border/60 bg-white overflow-hidden p-2 flex items-center justify-center shadow-xs hover:shadow-md transition-all duration-300">
+            <div className="w-full aspect-square rounded-xl border border-neutral-border/60 bg-white overflow-hidden  flex items-center justify-center shadow-xs hover:shadow-md transition-all duration-300">
               <img
-                src={getImageUrl('chicken-category.png')}
-                alt="Fresh Meat"
-                className="w-full h-full rounded-md object-contain mix-blend-multiply group-hover:scale-105 transition-all duration-300"
+                src={FoodItems}
+                alt="Our Products"
+                className="w-full rounded-md h-full object-contain mix-blend-multiply group-hover:scale-105 transition-all duration-300"
               />
             </div>
             <span className="text-[11px] font-extrabold text-neutral-dark text-center mt-1.5 leading-tight">
-              Fresh Meat
+              Our Products
             </span>
           </div>
-
           {/* Card 2: Vegetables & Fruits */}
           <div
             onClick={() => navigate('/products?category=vegetables,fruits')}
             className="flex flex-col items-center group cursor-pointer"
           >
-            <div className="w-full aspect-square rounded-xl border border-neutral-border/60 bg-white overflow-hidden p-2 flex items-center justify-center shadow-xs hover:shadow-md transition-all duration-300">
+            <div className="w-full aspect-square rounded-xl border border-neutral-border/60 bg-white overflow-hidden  flex items-center justify-center shadow-xs hover:shadow-md transition-all duration-300">
               <img
                 src={getImageUrl('fruits-category.png')}
                 alt="Vegetables & Fruits"
@@ -303,11 +310,28 @@ export const Home = () => {
           </div>
 
           {/* Card 3: Groceries */}
+
+          <div
+            onClick={() => navigate('/products?category=chicken,mutton,fish,prawns')}
+            className="flex flex-col items-center group cursor-pointer"
+          >
+            <div className="w-full aspect-square rounded-xl border border-neutral-border/60 bg-white overflow-hidden  flex items-center justify-center shadow-xs hover:shadow-md transition-all duration-300">
+              <img
+                src={getImageUrl('chicken-category.png')}
+                alt="Fresh Meat"
+                className="w-full h-full rounded-md object-contain mix-blend-multiply group-hover:scale-105 transition-all duration-300"
+              />
+            </div>
+            <span className="text-[11px] font-extrabold text-neutral-dark text-center mt-1.5 leading-tight">
+              Fresh Meat
+            </span>
+          </div>
+          {/* Card 4: Our Products */}
           <div
             onClick={() => navigate('/products?category=grocery')}
             className="flex flex-col items-center group cursor-pointer"
           >
-            <div className="w-full aspect-square rounded-xl border border-neutral-border/60 bg-white overflow-hidden p-2 flex items-center justify-center shadow-xs hover:shadow-md transition-all duration-300">
+            <div className="w-full aspect-square rounded-xl border border-neutral-border/60 bg-white overflow-hidden  flex items-center justify-center shadow-xs hover:shadow-md transition-all duration-300">
               <img
                 src={GroceriesImg}
                 alt="Groceries"
@@ -316,23 +340,6 @@ export const Home = () => {
             </div>
             <span className="text-[11px] font-extrabold text-neutral-dark text-center mt-1.5 leading-tight">
               Groceries
-            </span>
-          </div>
-
-          {/* Card 4: Cloud Kitchen */}
-          <div
-            onClick={() => navigate('/cloud-kitchen')}
-            className="flex flex-col items-center group cursor-pointer"
-          >
-            <div className="w-full aspect-square rounded-xl border border-neutral-border/60 bg-white overflow-hidden p-2 flex items-center justify-center shadow-xs hover:shadow-md transition-all duration-300">
-              <img
-                src={CloudKitImg}
-                alt="Cloud Kitchen"
-                className="w-full rounded-md h-full object-contain mix-blend-multiply group-hover:scale-105 transition-all duration-300"
-              />
-            </div>
-            <span className="text-[11px] font-extrabold text-neutral-dark text-center mt-1.5 leading-tight">
-              Cloud Kitchen
             </span>
           </div>
         </div>
@@ -364,84 +371,39 @@ export const Home = () => {
           </div>
         )}
       </div>
+      {/* Our Products Section */}
+      <div>
+        <div className="flex justify-between items-center mb-3">
+          <h3 className="text-base font-bold text-neutral-dark">
+            Our Products ✨
+          </h3>
+          <button
+            onClick={() => navigate('/products')}
+            className="text-xs font-bold text-primary flex items-center gap-0.5 hover:underline"
+          >
+            See All <FaChevronRight className="text-[10px]" />
+          </button>
+        </div>
 
-      {/* ☁️ Cloud Kitchen Section */}
-      <div className="flex flex-col gap-3">
-        {/* Header */}
-        <div className="flex justify-between items-center">
-          <div className="flex flex-col text-left">
-            <div className="flex items-center gap-2">
-              <h3 className="text-base font-black text-neutral-dark">Cloud Kitchen</h3>
-              <span className="bg-amber-500 text-white text-[8px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider animate-pulse">Home Food</span>
-            </div>
-            <p className="text-[10px] text-neutral-dark/50 font-semibold mt-0.5">Authentic Warangal recipes, freshly cooked & delivered</p>
+        {loading ? (
+          <SkeletonList count={2} />
+        ) : (
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-none">
+            {captainBroProducts.length === 0 ? (
+              <div className="text-xs font-semibold text-neutral-dark/40 py-4 w-full text-center">
+                No products available at the moment.
+              </div>
+            ) : (
+              captainBroProducts.map((p) => (
+                <div key={p.id} className="min-w-[160px] w-[160px] flex-shrink-0">
+                  <ProductCard product={p} />
+                </div>
+              ))
+            )}
           </div>
-          <span className="text-xl">🍽️</span>
-        </div>
-
-        {/* Cloud Kitchen Banner Image */}
-        <div
-          onClick={() => navigate('/cloud-kitchen')}
-          className="w-full rounded-xl overflow-hidden shadow-lg border border-neutral-border cursor-pointer hover:opacity-95 transition-all"
-        >
-          <img
-            src={CloudKitchenBanner}
-            alt="Cloud Kitchen — Authentic Warangal Recipes"
-            className="w-full h-auto block"
-          />
-        </div>
-
-        {/* View All Button */}
-        <button
-          onClick={() => navigate('/cloud-kitchen')}
-          className="w-full py-2.5 bg-primary border border-primary rounded-lg text-xs font-bold text-white flex items-center justify-center gap-1 hover:bg-primary-dark active:scale-[0.98] transition-all shadow-md shadow-primary/20"
-        >
-          View All Cloud Kitchen Dishes <FaChevronRight className="text-[10px]" />
-        </button>
-
-        {/* Dish Cards - Horizontal Scroll */}
-        <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-none">
-          {CLOUD_KITCHEN_DISHES.slice(0, 8).map((dish) => (
-            <div
-              key={dish.id}
-              className="min-w-[175px] w-[175px] flex-shrink-0 bg-white rounded-lg overflow-hidden border border-neutral-border/70 shadow-sm hover:shadow-xl transition-all duration-300 group cursor-pointer relative"
-              onClick={() => navigate(`/cloud-kitchen/${dish.id}`)}
-            >
-              {/* Image with gradient overlay */}
-              <div className="w-full h-[135px] overflow-hidden bg-neutral-light relative">
-                <img src={dish.img} alt={dish.name} className="w-full h-full object-cover group-hover:scale-110 transition-all duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-xs px-2 py-0.5 rounded flex items-center gap-0.5 text-[10px] font-bold text-neutral-dark border border-neutral-border/40">
-                  <FaStar className="text-secondary text-[9px]" />
-                  <span>{dish.rating || '5.0'}</span>
-                </div>
-
-
-
-
-                {/* Veg / Non-veg badge */}
-                <div className="absolute bottom-2 right-2">
-                  <span className={`w-4 h-4 rounded-[3px] border-[1.5px] flex items-center justify-center ${dish.isVeg ? 'border-green-600' : 'border-red-600'}`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${dish.isVeg ? 'bg-green-600' : 'bg-red-600'}`} />
-                  </span>
-                </div>
-              </div>
-              {/* Details */}
-              <div className="p-2.5 flex flex-col gap-1.5 text-left">
-                <h4 className="text-[13px] font-black text-neutral-dark leading-tight group-hover:text-primary transition-colors truncate">{dish.name}</h4>
-                <span className="text-[9px] text-neutral-dark/50 font-semibold truncate">{dish.teluguName} • {dish.hindiName}</span>
-
-                <span className="text-md  font-black text-neutral-dark">₹{dish.price}</span>
-
-              </div>
-
-
-            </div>
-          ))}
-        </div>
-
-
+        )}
       </div>
+
 
       {/* Fresh Vegetables Section */}
       <div>
@@ -502,6 +464,38 @@ export const Home = () => {
           </div>
         )}
       </div>
+      {/* Our Products Section */}
+      <div>
+        <div className="flex justify-between items-center mb-3">
+          <h3 className="text-base font-bold text-neutral-dark">
+            Our Products ✨
+          </h3>
+          <button
+            onClick={() => navigate('/products?category=our-products')}
+            className="text-xs font-bold text-primary flex items-center gap-0.5 hover:underline"
+          >
+            See All <FaChevronRight className="text-[10px]" />
+          </button>
+        </div>
+
+        {loading ? (
+          <SkeletonList count={2} />
+        ) : (
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-none">
+            {captainBroProducts.length === 0 ? (
+              <div className="text-xs font-semibold text-neutral-dark/40 py-4 w-full text-center">
+                No products available at the moment.
+              </div>
+            ) : (
+              captainBroProducts.map((p) => (
+                <div key={p.id} className="min-w-[160px] w-[160px] flex-shrink-0">
+                  <ProductCard product={p} />
+                </div>
+              ))
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Daily Groceries Section */}
       <div>
@@ -542,6 +536,8 @@ export const Home = () => {
           onClick={() => navigate('/products')}
         />
       </div>
+
+
 
 
 

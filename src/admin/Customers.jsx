@@ -1,25 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { getUsers } from '../services/userService';
+import React, { useEffect } from 'react';
+import { useAdmin } from '../hooks/useAdmin';
 import Loader from '../components/common/Loader';
 import { FaUserAlt } from 'react-icons/fa';
 
 export const Customers = () => {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { customers, loading, fetchCustomers } = useAdmin();
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const u = await getUsers();
-        // Filter out only customers
-        setUsers(u.filter(x => x.role === 'customer'));
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUsers();
+    fetchCustomers();
   }, []);
 
   return (
@@ -29,15 +17,15 @@ export const Customers = () => {
         <p className="text-[10px] text-neutral-dark/50 font-semibold mt-0.5">List of registered buyers</p>
       </div>
 
-      {loading ? (
+      {loading && customers.length === 0 ? (
         <Loader />
-      ) : users.length === 0 ? (
+      ) : customers.length === 0 ? (
         <div className="p-8 bg-white border border-neutral-border rounded-3xl text-center text-xs font-semibold text-neutral-dark/40">
           No customers registered yet.
         </div>
       ) : (
         <div className="flex flex-col gap-2.5">
-          {users.map((u) => (
+          {customers.map((u) => (
             <div key={u.uid} className="bg-white p-3.5 rounded-2xl border border-neutral-border flex items-center gap-3 shadow-xs">
               <div className="w-10 h-10 rounded-full bg-primary-light text-primary flex items-center justify-center text-sm font-bold border border-primary/10">
                 <FaUserAlt />
@@ -53,4 +41,5 @@ export const Customers = () => {
     </div>
   );
 };
+
 export default Customers;

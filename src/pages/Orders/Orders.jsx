@@ -6,7 +6,7 @@ import { formatPrice } from '../../utils/formatPrice';
 import { formatDate } from '../../utils/helpers';
 import Loader from '../../components/common/Loader';
 import Button from '../../components/common/Button';
-import { FaInbox, FaBoxOpen, FaShippingFast, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
+import { FaInbox, FaBoxOpen, FaShippingFast, FaCheckCircle, FaExclamationCircle, FaPhoneAlt, FaMotorcycle } from 'react-icons/fa';
 
 export const Orders = () => {
   const navigate = useNavigate();
@@ -131,6 +131,27 @@ export const Orders = () => {
                   </p>
                 </div>
               </div>
+
+              {/* Rider Assigned Info */}
+              {order.riderId && !['delivered', 'cancelled'].includes(order.status) && (
+                <div className="mt-1 pt-3 border-t border-neutral-border flex items-center justify-between" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-full bg-secondary-light border border-secondary/20 flex items-center justify-center text-secondary-dark text-xs font-black uppercase">
+                      {order.riderName ? order.riderName.substring(0, 2) : <FaMotorcycle />}
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-bold text-neutral-dark/60 uppercase tracking-wider">Delivery Partner</span>
+                      <span className="text-xs font-extrabold text-neutral-dark">{order.riderName || 'Assigned'}</span>
+                    </div>
+                  </div>
+                  <a
+                    href={`tel:${order.riderPhone || ''}`}
+                    className="w-8 h-8 rounded-full bg-green-500 hover:bg-green-600 active:scale-95 text-white flex items-center justify-center transition-all shadow-sm"
+                  >
+                    <FaPhoneAlt className="text-xs" />
+                  </a>
+                </div>
+              )}
             </div>
           );
         })}

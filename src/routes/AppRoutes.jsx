@@ -9,6 +9,7 @@ import Navbar from '../components/layout/Navbar';
 import PrivateRoute from './PrivateRoute';
 import AdminRoute from './AdminRoute';
 import RiderRoute from './RiderRoute';
+import SuperAdminRoute from './SuperAdminRoute';
 
 // Loader
 import Loader from '../components/common/Loader';
@@ -42,6 +43,9 @@ const AdminOrders = lazy(() => import('../admin/Orders'));
 const AdminCustomers = lazy(() => import('../admin/Customers'));
 const AdminRiders = lazy(() => import('../admin/Riders'));
 const AdminSettings = lazy(() => import('../admin/Settings'));
+const AdminMedicines = lazy(() => import('../admin/Medicines'));
+const AdminUserManagement = lazy(() => import('../admin/UserManagement'));
+const AdminAnalytics = lazy(() => import('../admin/Analytics'));
 
 // Rider Pages (Lazy)
 const RiderDashboard = lazy(() => import('../rider/RiderDashboard'));
@@ -64,21 +68,23 @@ export const AppRoutes = () => {
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
 
+            {/* Public Customer Routes */}
+            <Route path="/home" element={<Home />} />
+            <Route path="/categories" element={<Categories />} />
+            <Route path="/products" element={<Products />} />
+            <Route path="/product/:id" element={<ProductDetails />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/cloud-kitchen" element={<CloudKitchen />} />
+            <Route path="/cloud-kitchen/:id" element={<CloudKitchenDishDetails />} />
+
             {/* Protected Customer Routes */}
             <Route element={<PrivateRoute />}>
-              <Route path="/home" element={<Home />} />
-              <Route path="/categories" element={<Categories />} />
-              <Route path="/products" element={<Products />} />
-              <Route path="/product/:id" element={<ProductDetails />} />
-              <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/orders" element={<Orders />} />
               <Route path="/orders/:id" element={<OrderDetails />} />
               <Route path="/order-success" element={<OrderSuccess />} />
-              <Route path="/profile" element={<Profile />} />
               <Route path="/addresses" element={<AddressManagement />} />
-              <Route path="/cloud-kitchen" element={<CloudKitchen />} />
-              <Route path="/cloud-kitchen/:id" element={<CloudKitchenDishDetails />} />
             </Route>
 
             {/* Protected Admin Routes */}
@@ -89,6 +95,13 @@ export const AppRoutes = () => {
               <Route path="/admin/customers" element={<AdminCustomers />} />
               <Route path="/admin/riders" element={<AdminRiders />} />
               <Route path="/admin/settings" element={<AdminSettings />} />
+              <Route path="/admin/medicines" element={<AdminMedicines />} />
+
+              {/* Super Admin Exclusive Routes */}
+              <Route element={<SuperAdminRoute />}>
+                <Route path="/admin/users" element={<AdminUserManagement />} />
+                <Route path="/admin/analytics" element={<AdminAnalytics />} />
+              </Route>
             </Route>
 
             {/* Protected Rider Routes */}

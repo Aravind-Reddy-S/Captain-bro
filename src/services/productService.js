@@ -4,7 +4,7 @@ import {
   createProductDb, 
   updateProductDb, 
   deleteProductDb 
-} from '../supabase/database';
+} from '../firebase/database';
 
 export const getProducts = async () => {
   return await getProductsDb();

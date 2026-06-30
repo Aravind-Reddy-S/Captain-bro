@@ -8,10 +8,12 @@ function Splash() {
   const { currentUser } = useAuth();
 
   const handleNavigation = () => {
-    if (currentUser) {
-      navigate("/home");
+    if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'super_admin')) {
+      navigate("/admin");
+    } else if (currentUser && currentUser.role === 'rider') {
+      navigate("/rider");
     } else {
-      navigate("/login");
+      navigate("/home");
     }
   };
 

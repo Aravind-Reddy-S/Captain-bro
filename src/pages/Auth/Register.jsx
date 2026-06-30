@@ -1,21 +1,22 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
-import { validateEmail, validatePassword, validatePhone } from '../../utils/validation';
+import { validatePassword, validatePhone } from '../../utils/validation';
 
 export const Register = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { register } = useAuth();
 
+  const prefilledPhone = location.state?.prefilledPhone || '';
+
   const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
+  const [phone, setPhone] = useState(prefilledPhone);
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('customer');
 
-  const [emailError, setEmailError] = useState('');
   const [phoneError, setPhoneError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [localError, setLocalError] = useState('');
@@ -23,17 +24,12 @@ export const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setEmailError('');
     setPhoneError('');
     setPasswordError('');
     setLocalError('');
 
     let hasError = false;
 
-    if (!validateEmail(email)) {
-      setEmailError('Please enter a valid email address.');
-      hasError = true;
-    }
     if (!validatePassword(password)) {
       setPasswordError('Password must be at least 6 characters.');
       hasError = true;
@@ -47,8 +43,10 @@ export const Register = () => {
 
     setSubmitting(true);
     try {
-      await register(email, password, fullName, phone, role);
-      if (role === 'admin') {
+      // Under the hood, create email from phone number to keep authentication simple
+      const generatedEmail = `${phone.trim()}@wfoods.com`;
+      await register(generatedEmail, password, fullName, phone, role);
+      if (role === 'admin' || role === 'super_admin') {
         navigate('/admin');
       } else if (role === 'rider') {
         navigate('/rider');
@@ -82,7 +80,7 @@ export const Register = () => {
         )}
 
         <Input
-          label="Full Name"
+          label="Recipients Full Name *"
           type="text"
           placeholder="e.g. Rahul Sharma"
           value={fullName}
@@ -91,27 +89,18 @@ export const Register = () => {
         />
 
         <Input
-          label="Email Address"
-          type="email"
-          placeholder="e.g. rahul@example.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          error={emailError}
-          required={true}
-        />
-
-        <Input
-          label="Phone Number"
+          label="Mobile Phone Number *"
           type="tel"
           placeholder="e.g. 9876543210"
           value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+          onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
           error={phoneError}
           required={true}
+          maxLength={10}
         />
 
         <Input
-          label="Password"
+          label="Create Password *"
           type="password"
           placeholder="Minimum 6 characters"
           value={password}
@@ -128,7 +117,7 @@ export const Register = () => {
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
-            className="w-full px-4 py-3 rounded-md border border-neutral-border bg-neutral-light transition-all outline-none focus:border-primary focus:bg-white"
+            className="w-full px-4 py-3 rounded-md border border-neutral-border bg-neutral-light transition-all outline-none focus:border-primary focus:bg-white text-xs font-semibold"
           >
             <option value="customer">Customer</option>
             <option value="rider">Rider</option>

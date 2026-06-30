@@ -60,6 +60,8 @@ CREATE TABLE riders (
     status VARCHAR(50) DEFAULT 'idle',
     current_latitude DOUBLE PRECISION,
     current_longitude DOUBLE PRECISION,
+    driving_license VARCHAR(100),
+    aadhar_number VARCHAR(100),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -73,6 +75,7 @@ CREATE TABLE orders (
     delivery_charge NUMERIC(10, 2) DEFAULT 20.00,
     packaging_charge NUMERIC(10, 2) DEFAULT 10.00,
     rider_id VARCHAR(255) REFERENCES riders(id) ON DELETE SET NULL,
+    delivery_pin VARCHAR(4),
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -117,7 +120,6 @@ INSERT INTO products (id, name, category, price, weight, description, image, in_
 ('p17', 'Jai Sri Ram Sona Masuri Rice', 'grocery', 70.00, '1kg', 'Premium lightweight and aromatic Sona Masuri rice, a staple for local meals.', 'jai-sri-ram-rice.png', TRUE, 4.8),
 ('p18', 'Fresh Chicken Boneless', 'chicken', 320.00, '500g', 'Tender, skinless, boneless chicken breast cuts, perfect for grilling, frying, and stir-fries.', 'chicken-boneless.png', TRUE, 4.9),
 ('p19', 'Juicy Chicken Drumsticks', 'chicken', 260.00, '500g', 'Fresh chicken drumsticks, cleaned and trimmed. Ideal for tandoori and baking.', 'chicken-drumstick.png', TRUE, 4.8),
-('p20', 'Crispy Chicken Wings', 'chicken', 180.00, '500g', 'Fresh, meaty chicken wings with skin. Perfect for snacks, starters, and bar bites.', 'chicken-wings.png', TRUE, 4.7),
 ('p21', 'Mutton Boneless Cuts', 'mutton', 580.00, '500g', 'Fat-free, boneless chunks of tender goat meat, cut to perfection for dry fry or mutton tikka.', 'mutton-boneless.png', TRUE, 4.9),
 ('p22', 'Rava Fish Fry Cut', 'fish', 290.00, '500g', 'Cleaned, sliced fish pieces seasoned and ready for traditional rava fish fry.', 'rava-fish.png', TRUE, 4.6),
 ('p23', 'Organic Sweet Bananas', 'fruits', 60.00, '1 dozen', 'Perfectly ripe, sweet organic bananas sourced from local farmers in Telangana.', 'banana.png', TRUE, 4.8),
@@ -131,7 +133,8 @@ INSERT INTO products (id, name, category, price, weight, description, image, in_
 ('p32', 'Thums Up (750ml)', 'grocery', 45.00, '750ml', 'Strong carbonated cola drink with a spicy bite.', 'thums-up.png', TRUE, 4.8),
 ('p33', 'Vanilla Ice Cream', 'grocery', 60.00, '250g', 'Classic rich and creamy vanilla bean ice cream.', 'vanilla-ice-cream.png', TRUE, 4.8),
 ('p34', 'Double Ka Meetha', 'grocery', 80.00, '200g', 'Delectable bread pudding sweet soaked in cardamom syrup and garnished with dry fruits.', 'double-ka-meetha.png', TRUE, 4.9),
-('p35', 'Thick Curd', 'grocery', 30.00, '500g', 'Thick, creamy and pasteurized fresh dairy curd.', 'thick-curd.png', TRUE, 4.8);
+('p35', 'Thick Curd', 'grocery', 30.00, '500g', 'Thick, creamy and pasteurized fresh dairy curd.', 'thick-curd.png', TRUE, 4.8),
+('p39', 'Fresh Chicken Skin', 'chicken', 120.00, '500g', 'Freshly prepared and cleaned chicken skin, rich in flavor. Perfect for making crispy chicken skin snacks, cracklings, or rendering schmaltz.', 'chicken-skin.png', TRUE, 4.8);
 
 -- Enable Row Level Security (RLS) or add indexes
 CREATE INDEX idx_products_category ON products(category);

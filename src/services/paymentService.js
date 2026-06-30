@@ -1,4 +1,14 @@
-import { supabase, isMockSupabase } from '../supabase/supabaseClient';
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import { app, isMockFirebase } from '../firebase/firebaseConfig';
+
+const rawRazorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID || '';
+const isRazorpayPlaceholder = !rawRazorpayKey || 
+  rawRazorpayKey.toLowerCase().includes('placeholder') || 
+  rawRazorpayKey.toLowerCase().includes('your_') || 
+  rawRazorpayKey.toLowerCase().includes('paste_your');
+
+const isRazorpayMock = isMockFirebase || isRazorpayPlaceholder;
+const functions = getFunctions(app);
 
 /**
  * Dynamically injects the Razorpay Checkout script if it is not already present.
@@ -32,7 +42,7 @@ export const initiatePayment = async ({
   onSuccess,
   onFailure
 }) => {
-  const isMock = isMockSupabase || !import.meta.env.VITE_RAZORPAY_KEY_ID || import.meta.env.VITE_RAZORPAY_KEY_ID === 'placeholder';
+  const isMock = isRazorpayMock;
 
   if (isMock) {
     // Show high-fidelity simulated Razorpay overlay
@@ -200,10 +210,10 @@ const showMockRazorpayModal = ({ amount, orderId, customerName, onSuccess, onFai
 };
 
 /**
- * Creates a Razorpay Order by invoking the backend Supabase Edge Function or simulating it locally.
+ * Creates a Razorpay Order by invoking the backend Firebase Cloud Function or simulating it locally.
  */
 export const createRazorpayOrderOnServer = async (amount) => {
-  const isMock = isMockSupabase || !import.meta.env.VITE_RAZORPAY_KEY_ID || import.meta.env.VITE_RAZORPAY_KEY_ID === 'placeholder';
+  const isMock = isRazorpayMock;
 
   if (isMock) {
     await new Promise(resolve => setTimeout(resolve, 600));
@@ -214,19 +224,17 @@ export const createRazorpayOrderOnServer = async (amount) => {
       currency: 'INR'
     };
   } else {
-    const { data, error } = await supabase.functions.invoke('create-razorpay-order', {
-      body: { amount }
-    });
-    if (error) throw error;
-    return data;
+    const createRazorpayOrder = httpsCallable(functions, 'createRazorpayOrder');
+    const result = await createRazorpayOrder({ amount });
+    return result.data;
   }
 };
 
 /**
- * Verifies Razorpay Payment Signature by invoking the backend Supabase Edge Function or simulating it locally.
+ * Verifies Razorpay Payment Signature by invoking the backend Firebase Cloud Function or simulating it locally.
  */
 export const verifyRazorpayPaymentOnServer = async (paymentDetails) => {
-  const isMock = isMockSupabase || !import.meta.env.VITE_RAZORPAY_KEY_ID || import.meta.env.VITE_RAZORPAY_KEY_ID === 'placeholder';
+  const isMock = isRazorpayMock;
 
   if (isMock) {
     await new Promise(resolve => setTimeout(resolve, 600));
@@ -235,10 +243,8 @@ export const verifyRazorpayPaymentOnServer = async (paymentDetails) => {
       verified: true
     };
   } else {
-    const { data, error } = await supabase.functions.invoke('verify-razorpay-payment', {
-      body: paymentDetails
-    });
-    if (error) throw error;
-    return data;
+    const verifyRazorpayPayment = httpsCallable(functions, 'verifyRazorpayPayment');
+    const result = await verifyRazorpayPayment(paymentDetails);
+    return result.data;
   }
 };

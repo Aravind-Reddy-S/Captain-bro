@@ -23,7 +23,17 @@ export const DeliveryMap = ({
 
   // Try loading Google Maps script if API key is present
   useEffect(() => {
-    if (!googleKey || googleKey === 'placeholder') {
+    const isPlaceholder = (val) => {
+      if (!val) return true;
+      const lowercase = val.toLowerCase();
+      return (
+        lowercase.includes('placeholder') ||
+        lowercase.includes('your_') ||
+        lowercase.includes('paste_your')
+      );
+    };
+
+    if (isPlaceholder(googleKey)) {
       setUseFallback(true);
       return;
     }
@@ -248,7 +258,7 @@ export const DeliveryMap = ({
       ctx.beginPath();
       ctx.arc(startX, startY, 9, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = '#white';
+      ctx.strokeStyle = 'white';
       ctx.lineWidth = 2;
       ctx.stroke();
 
@@ -270,7 +280,7 @@ export const DeliveryMap = ({
       ctx.beginPath();
       ctx.arc(endX, endY, 9, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = '#white';
+      ctx.strokeStyle = 'white';
       ctx.lineWidth = 2;
       ctx.stroke();
 
@@ -292,7 +302,7 @@ export const DeliveryMap = ({
       ctx.beginPath();
       ctx.arc(riderX, riderY, 11, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = '#white';
+      ctx.strokeStyle = 'white';
       ctx.lineWidth = 2;
       ctx.stroke();
 

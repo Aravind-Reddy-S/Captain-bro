@@ -13,7 +13,36 @@ import RSPMuttonPakora from "../../assets/images/RSPMuttonPakora.png";
 import RSPMuttonBiryani from "../../assets/images/RSPMuttonBiryani.png";
 import RSPFishPulusu from "../../assets/images/RSPFishPulusu.png";
 import RSPFishFry from "../../assets/images/RSPFishFry.png";
-import VeoChickenFry from "../../assets/videos/video1.mp4";
+
+// Recipe Video Constants (Hosted on ImageKit)
+const IMAGEKIT_BASE = "https://ik.imagekit.io/CaptainBro/tr:orig-true/CaptionBro%20Product%20recipes%20Videos";
+
+const ChickenBiryaniVid = `${IMAGEKIT_BASE}/Chicken%20biryani.mp4`;
+const ChickenCurryVid = `${IMAGEKIT_BASE}/Chicken%20Curry.mp4`;
+const ChickenFryVid = `${IMAGEKIT_BASE}/Chicken%20fry.mp4`;
+const ChickenPakodaVid = `${IMAGEKIT_BASE}/Chicken%20pakoda%20main.mp4`;
+const FishFryVid = `${IMAGEKIT_BASE}/Fish%20fry.mov`;
+const FishPulusuVid = `${IMAGEKIT_BASE}/Fish%20pulusu%20main.mp4`;
+const MuttonBiryaniVid = `${IMAGEKIT_BASE}/Mutton%20biryani.mp4`;
+const MuttonCurryVid = `${IMAGEKIT_BASE}/Mutton%20curry.mp4`;
+const MuttonFryVid = `${IMAGEKIT_BASE}/Mutton%20Fryone.mp4`;
+const MuttonPakodaVid = `${IMAGEKIT_BASE}/Mutton%20pakoda.mp4`;
+const PrawnsCurryVid = `${IMAGEKIT_BASE}/Prawns%20curry.mp4`;
+const PrawnsFryVid = `${IMAGEKIT_BASE}/Prawns%20fry.mp4`;
+
+// const ChickenBiryaniVid = "https://ik.imagekit.io/uuwqngqjh/New%20Folder/Chicken%20biryani.mp4?updatedAt=1781991771378";
+// const ChickenCurryVid = "https://ik.imagekit.io/uuwqngqjh/New%20Folder/Chicken%20Curry.mp4?updatedAt=1781993351727";
+// const ChickenFryVid = "https://ik.imagekit.io/uuwqngqjh/New%20Folder/Chicken%20fry.mp4?updatedAt=1781990668867";
+// const ChickenPakodaVid = "https://ik.imagekit.io/uuwqngqjh/New%20Folder/Chicken%20pakoda%20main.mp4?updatedAt=1781991366281";
+// const FishFryVid = "https://ik.imagekit.io/uuwqngqjh/New%20Folder/Fish%20fry.mp4?updatedAt=1781992219211";
+// const FishPulusuVid = "https://ik.imagekit.io/uuwqngqjh/New%20Folder/Fish%20pulusu%20main.mp4?updatedAt=1781990773820";
+// const MuttonBiryaniVid = "https://ik.imagekit.io/uuwqngqjh/New%20Folder/Mutton%20biryani.mp4?updatedAt=1781991166176";
+// const MuttonCurryVid = "https://ik.imagekit.io/uuwqngqjh/New%20Folder/Mutton%20curry.mp4?updatedAt=1781991662571";
+// const MuttonFryVid = "https://ik.imagekit.io/uuwqngqjh/New%20Folder/Mutton%20Fryone.mp4?updatedAt=1781994146758";
+// const MuttonPakodaVid = "https://ik.imagekit.io/uuwqngqjh/New%20Folder/Mutton%20Fryone.mp4?updatedAt=1781994146758";
+// const PrawnsCurryVid = "https://ik.imagekit.io/uuwqngqjh/New%20Folder/Prawns%20curry.mp4?updatedAt=1781992466783";
+// const PrawnsFryVid = "https://ik.imagekit.io/uuwqngqjh/New%20Folder/Prawns%20fry.mp4?updatedAt=1781992382188";
+
 
 import RSPPrawnsCurry from "../../assets/images/RSPPrawnsCurry.png";
 import RSPPrawnsFry from "../../assets/images/RSPPrawnsFry.png";
@@ -184,68 +213,75 @@ const CATEGORY_RECIPES = {
       name: "Special Chicken Curry",
       time: "45 Mins",
       difficulty: "Medium",
-      image: chickenCurry
+      image: chickenCurry,
+      video: ChickenCurryVid
     },
     {
       name: "Special Chicken Biryani",
       time: "15 Mins Video",
       difficulty: "Easy",
-      image: ChickenBiryaniImg
+      image: ChickenBiryaniImg,
+      video: ChickenBiryaniVid
     },
     {
       name: "Special Chicken Pakora",
       time: "40 Mins",
       difficulty: "Medium",
-      image: ChickenPakora
+      image: ChickenPakora,
+      video: ChickenPakodaVid
     },
     {
       name: "Special Chicken Fry",
       time: "30 Mins",
       difficulty: "Easy",
-      image: chickenFry
+      image: chickenFry,
+      video: ChickenFryVid
     }
-
-
   ],
   mutton: [
     {
       name: "Special Mutton Curry",
       time: "60 Mins",
       difficulty: "Medium",
-      image: RSPMuttonCurry
+      image: RSPMuttonCurry,
+      video: MuttonCurryVid
     },
     {
       name: "Special Mutton Biryani",
       time: "12 Mins Video",
       difficulty: "Easy",
-      image: RSPMuttonBiryani
+      image: RSPMuttonBiryani,
+      video: MuttonBiryaniVid
     },
     {
       name: "Special Mutton Fry",
       time: "50 Mins",
       difficulty: "Medium",
-      image: RSPMuttonFry
+      image: RSPMuttonFry,
+      video: MuttonFryVid
     },
     {
       name: "Special Mutton Pakora",
       time: "70 Mins",
       difficulty: "Hard",
-      image: RSPMuttonPakora
+      image: RSPMuttonPakora,
+      video: MuttonPakodaVid
     }
-
   ],
   fish: [
     {
       name: "Telangana Fish Pulusu",
       time: "35 Mins",
       difficulty: "Medium",
-      image: RSPFishPulusu
+      image: RSPFishPulusu,
+      video: FishPulusuVid
     },
     {
       name: "Special Fish Fry",
       time: "25 Mins",
       difficulty: "Easy",
-      image: RSPFishFry
+      image: RSPFishFry,
+      video: FishFryVid
     }
   ],
   prawns: [
@@ -253,19 +289,22 @@ const CATEGORY_RECIPES = {
       name: "Special Prawns Curry",
       time: "25 Mins",
       difficulty: "Easy",
-      image: RSPPrawnsCurry
+      image: RSPPrawnsCurry,
+      video: PrawnsCurryVid
     },
     {
       name: "Special Prawns Fry",
       time: "30 Mins",
       difficulty: "Easy",
-      image: RSPPrawnsFry
+      image: RSPPrawnsFry,
+      video: PrawnsFryVid
     },
     {
       name: "Special PrawnsBiryani",
       time: "14 Mins Video",
       difficulty: "Easy",
-      image: RSPPrawnsBiryani
+      image: RSPPrawnsBiryani,
+      video: PrawnsFryVid
     }
   ],
   vegetables: [
@@ -345,6 +384,7 @@ export const ProductDetails = () => {
   const [frequentQuantities, setFrequentQuantities] = useState({});
   const [instructions, setInstructions] = useState('');
   const [selectedVideo, setSelectedVideo] = useState(null);
+  const [selectedCuttingType, setSelectedCuttingType] = useState('Curry Cut (Small)');
 
   const recipes = product ? (CATEGORY_RECIPES[product.category] || CATEGORY_RECIPES.grocery) : [];
 
@@ -358,6 +398,7 @@ export const ProductDetails = () => {
         ]);
         setProduct(data);
         setAllProducts(products);
+        setSelectedCuttingType('Curry Cut (Small)');
       } catch (err) {
         console.error(err);
       } finally {
@@ -369,8 +410,13 @@ export const ProductDetails = () => {
 
   const handleAddToCart = () => {
     if (product) {
-      // Add main product
-      addToCart(product, quantity);
+      const showCuttingType = (product.category === 'chicken' || product.category === 'mutton') && !product.name.toLowerCase().includes('drumstick') && !product.name.toLowerCase().includes('skin');
+      // Add main product with selected cutting type if applicable
+      const productWithSelection = {
+        ...product,
+        ...(showCuttingType ? { cuttingType: selectedCuttingType } : {})
+      };
+      addToCart(productWithSelection, quantity);
 
       // Add frequently bought together items
       enrichedFrequentItems.forEach((item) => {
@@ -485,11 +531,11 @@ export const ProductDetails = () => {
   return (
     <div className="flex-1 bg-neutral-light flex flex-col ">
       {/* Product Image Frame (Larger image h-80) */}
-      <div className="bg-white mb-2  flex items-center justify-center  border-b border-neutral-border relative">
+      <div className="bg-white mb-2 h-[320px] w-full flex items-center justify-center border-b border-neutral-border relative">
         <img
           src={getImageUrl(product.image)}
           alt={product.name}
-          className="max-h-full max-w-full object-contain"
+          className="w-full h-full object-contain"
           onError={(e) => {
             e.target.src = 'https://images.unsplash.com/photo-1544025162-d76694265947?w=300';
           }}
@@ -616,6 +662,52 @@ export const ProductDetails = () => {
           )} */}
         </div>
 
+        {/* Cutting Type Selection (Only for Chicken & Mutton, excluding Drumsticks & Skin) */}
+        {(product.category === 'chicken' || product.category === 'mutton') && !product.name.toLowerCase().includes('drumstick') && !product.name.toLowerCase().includes('skin') && (
+          <div className="flex flex-col gap-3 py-3.5 border-b border-neutral-border text-left">
+            <div className="flex flex-col">
+              <h4 className="text-xs font-black text-neutral-dark opacity-75 uppercase tracking-wider">
+                Select Cutting Type
+              </h4>
+              <p className="text-[10px] text-neutral-dark/45 font-semibold mt-0.5">Customize how your fresh cuts are sliced by the kitchen</p>
+            </div>
+
+            <div className={`grid ${product.name.toLowerCase().includes('boneless') ? 'grid-cols-2' : 'grid-cols-3'} gap-2 mt-1`}>
+              {[
+                { id: 'small', label: 'Curry Cut (Small)', desc: 'Quick cooking, small pieces' },
+                { id: 'big', label: 'Curry Cut (Big)', desc: 'Thick gravies, standard size' },
+                { id: 'biryani', label: 'Biryani Cut', desc: 'Large, bone-in succulent cuts' }
+              ].filter((option) => {
+                // Remove Biryani cut option for boneless items
+                if (product.name.toLowerCase().includes('boneless') && option.id === 'biryani') {
+                  return false;
+                }
+                return true;
+              }).map((option) => (
+                <button
+                  key={option.id}
+                  type="button"
+                  onClick={() => setSelectedCuttingType(option.label)}
+                  className={`flex flex-col items-start p-2.5 rounded-xl border text-left transition-all relative ${selectedCuttingType === option.label
+                    ? 'border-primary bg-primary-light/20 text-primary ring-1 ring-primary'
+                    : 'border-neutral-border/60 bg-white hover:border-neutral-dark/30'
+                    }`}
+                >
+                  <span className="text-xs font-black block">
+                    {option.label}
+                  </span>
+                  <span className="text-[9px] font-bold text-neutral-dark/45 mt-1 leading-tight block">
+                    {option.desc}
+                  </span>
+                  {selectedCuttingType === option.label && (
+                    <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-primary" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Description */}
         <div className="flex flex-col gap-1.5">
           <h4 className="text-xs font-bold text-neutral-dark opacity-50 uppercase tracking-wider">
@@ -644,7 +736,7 @@ export const ProductDetails = () => {
               {recipes.map((recipe, idx) => (
                 <div key={idx} className="flex flex-col gap-2 flex-shrink-0 w-60 group">
                   <div
-                    onClick={() => setSelectedVideo((recipe.name === "Special Chicken Pakora" || recipe.name === "Special Chicken Fry") ? VeoChickenFry : '/recipe-video.mp4')}
+                    onClick={() => recipe.video && setSelectedVideo(recipe.video)}
                     className="w-full h-28 bg-white border border-neutral-border rounded-md overflow-hidden shadow-xs  transition-all duration-300 cursor-pointer relative"
                   >
                     <img
@@ -837,22 +929,21 @@ export const ProductDetails = () => {
 
       {/* Video Modal Overlay */}
       {selectedVideo && (
-        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
-          <div className="bg-neutral-dark rounded-2xl overflow-hidden max-w-lg w-full relative border border-white/10 shadow-2xl">
+        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-black rounded-2xl overflow-hidden max-w-[360px] w-full aspect-[9/16] max-h-[82vh] relative border border-white/10 shadow-2xl flex items-center justify-center">
             <button
               onClick={() => setSelectedVideo(null)}
-              className="absolute top-3 right-3 text-white hover:text-gray-300 transition-colors z-50 bg-black/50 p-2 rounded-full active:scale-95"
+              className="absolute top-3 right-3 text-white hover:text-gray-300 transition-colors z-50 bg-black/60 p-2.5 rounded-full active:scale-95 shadow-lg border border-white/10"
             >
-              <FaTimes className="text-sm" />
+              <FaTimes className="text-xs" />
             </button>
-            <div className="relative pt-[56.25%] bg-black">
-              <video
-                src={selectedVideo}
-                controls
-                autoPlay
-                className="absolute inset-0 w-full h-full object-contain"
-              />
-            </div>
+            <video
+              src={selectedVideo}
+              controls
+              autoPlay
+              playsInline
+              className="w-full h-full object-contain"
+            />
           </div>
         </div>
       )}

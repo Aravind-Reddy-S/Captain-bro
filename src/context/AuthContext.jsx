@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect } from 'react';
 import { 
   loginUser, 
   registerUser, 
@@ -6,8 +6,10 @@ import {
   resetPassword, 
   subscribeToAuth,
   sendPhoneOtp,
-  verifyPhoneOtp
-} from '../supabase/auth';
+  verifyPhoneOtp,
+  loginRiderWithPhoneAndPassword,
+  loginUserWithPhoneAndPassword
+} from '../firebase/auth';
 
 export const AuthContext = createContext();
 
@@ -92,6 +94,36 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const loginRider = async (phone, password) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const userProfile = await loginRiderWithPhoneAndPassword(phone, password);
+      setCurrentUser(userProfile);
+      return userProfile;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loginPhoneAndPassword = async (phone, password) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const userProfile = await loginUserWithPhoneAndPassword(phone, password);
+      setCurrentUser(userProfile);
+      return userProfile;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const value = {
     currentUser,
     loading,
@@ -101,7 +133,9 @@ export const AuthProvider = ({ children }) => {
     logout,
     resetPass,
     loginPhone,
-    sendPhoneOtp
+    sendPhoneOtp,
+    loginRider,
+    loginPhoneAndPassword
   };
 
   return (

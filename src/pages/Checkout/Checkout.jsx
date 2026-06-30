@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../hooks/useCart';
 import { useAuth } from '../../hooks/useAuth';
 import { useOrders } from '../../hooks/useOrders';
 import { formatPrice } from '../../utils/formatPrice';
-import { loadState } from '../../utils/helpers';
+import { getAddressesDb, saveAddressDb } from '../../firebase/database';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
+import Loader from '../../components/common/Loader';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 
 import { initiatePayment, createRazorpayOrderOnServer, verifyRazorpayPaymentOnServer } from '../../services/paymentService';
@@ -17,20 +18,50 @@ export const Checkout = () => {
   const { currentUser } = useAuth();
   const { placeOrder, updateFields } = useOrders();
 
-  const userKey = currentUser ? `addresses_${currentUser.uid}` : 'addresses_guest';
-  const [savedAddresses] = useState(() => loadState(userKey, []));
-  const defaultAddress = savedAddresses.find(a => a.isDefault) || savedAddresses[0];
+  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [loadingAddresses, setLoadingAddresses] = useState(true);
 
-  const [customerName, setCustomerName] = useState(defaultAddress ? (defaultAddress.name || currentUser?.fullName || '') : (currentUser?.fullName || ''));
-  const [customerPhone, setCustomerPhone] = useState(defaultAddress ? (defaultAddress.phone || currentUser?.phone || '') : (currentUser?.phone || ''));
-  const [selectedAddressId, setSelectedAddressId] = useState(defaultAddress ? defaultAddress.id : 'custom');
-  const [address, setAddress] = useState(defaultAddress ? defaultAddress.addressLine : '');
-  const [landmark, setLandmark] = useState(defaultAddress ? (defaultAddress.landmark || '') : '');
+  const [customerName, setCustomerName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
+  const [selectedAddressId, setSelectedAddressId] = useState('custom');
+  const [address, setAddress] = useState('');
+  const [landmark, setLandmark] = useState('');
   const [notes, setNotes] = useState(() => localStorage.getItem('checkout_instructions') || '');
   const [paymentMethod, setPaymentMethod] = useState('cod');
   const [submitting, setSubmitting] = useState(false);
   const [detecting, setDetecting] = useState(false);
   const [detectError, setDetectError] = useState('');
+
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      if (!currentUser) {
+        setLoadingAddresses(false);
+        return;
+      }
+      try {
+        const list = await getAddressesDb(currentUser.uid);
+        setSavedAddresses(list);
+        
+        // Pre-fill with default address if exists
+        const defaultAddress = list.find(a => a.isDefault) || list[0];
+        if (defaultAddress) {
+          setCustomerName(defaultAddress.name || currentUser.fullName || '');
+          setCustomerPhone(defaultAddress.phone || currentUser.phone || '');
+          setSelectedAddressId(defaultAddress.id);
+          setAddress(defaultAddress.addressLine);
+          setLandmark(defaultAddress.landmark || '');
+        } else {
+          setCustomerName(currentUser.fullName || '');
+          setCustomerPhone(currentUser.phone || '');
+        }
+      } catch (err) {
+        console.error("Failed to load checkout addresses:", err);
+      } finally {
+        setLoadingAddresses(false);
+      }
+    };
+    fetchAddresses();
+  }, [currentUser]);
 
   const handleDetectLocation = () => {
     setDetecting(true);
@@ -83,6 +114,29 @@ export const Checkout = () => {
 
     setSubmitting(true);
 
+    // Save custom address to Firestore automatically upon successful checkout
+    if (currentUser) {
+      try {
+        const isAlreadySaved = savedAddresses.some(
+          a => a.addressLine.toLowerCase() === address.trim().toLowerCase()
+        );
+        if (!isAlreadySaved) {
+          const newAddr = {
+            id: 'addr_' + Math.random().toString(36).substr(2, 9),
+            name: customerName.trim(),
+            phone: customerPhone.trim(),
+            addressLine: address.trim(),
+            landmark: landmark.trim(),
+            type: 'Other',
+            isDefault: savedAddresses.length === 0
+          };
+          await saveAddressDb(currentUser.uid, newAddr);
+        }
+      } catch (saveError) {
+        console.error("Failed to automatically save address:", saveError);
+      }
+    }
+
     const baseOrderData = {
       customerId: currentUser?.uid || 'guest_user',
       customerName: customerName.trim(),
@@ -98,13 +152,11 @@ export const Checkout = () => {
 
     try {
       if (paymentMethod === 'online') {
-        // Step 1: Create Razorpay Order on server
         const response = await createRazorpayOrderOnServer(orderTotal);
         if (!response.success) {
           throw new Error('Failed to initialize online payment.');
         }
 
-        // Step 1.5: Create pending_payment order in Firestore to ensure durability
         const initialOrderData = {
           ...baseOrderData,
           razorpayOrderId: response.orderId,
@@ -113,7 +165,6 @@ export const Checkout = () => {
         };
         const createdOrder = await placeOrder(initialOrderData);
 
-        // Step 2: Open Razorpay checkout / mock portal
         initiatePayment({
           amount: orderTotal,
           orderId: response.orderId,
@@ -122,10 +173,8 @@ export const Checkout = () => {
           customerPhone: currentUser?.phone || '9876543210',
           onSuccess: async (paymentDetails) => {
             try {
-              // Step 3: Verify Razorpay signature on server
               const verifyRes = await verifyRazorpayPaymentOnServer(paymentDetails);
               if (verifyRes.success) {
-                // Step 4: Update order placement
                 const updatedOrder = await updateFields(createdOrder.id, {
                   paymentId: paymentDetails.razorpay_payment_id,
                   paymentStatus: 'paid',
@@ -149,7 +198,6 @@ export const Checkout = () => {
           }
         });
       } else {
-        // Cash on delivery flow
         const finalOrderData = {
           ...baseOrderData,
           paymentStatus: 'pending'
@@ -164,6 +212,10 @@ export const Checkout = () => {
       setSubmitting(false);
     }
   };
+
+  if (loadingAddresses) {
+    return <Loader fullPage={true} />;
+  }
 
   return (
     <div className="flex-1 bg-neutral-light px-4 py-5 flex flex-col gap-4 pb-20">
@@ -366,4 +418,5 @@ export const Checkout = () => {
     </div>
   );
 };
+
 export default Checkout;

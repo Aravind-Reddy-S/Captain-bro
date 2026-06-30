@@ -109,6 +109,125 @@ export const Orders = () => {
     setTimeout(() => setCopiedId(null), 1500);
   };
 
+  const handlePrintLabel = (order, item) => {
+    const printWindow = window.open('', '_blank', 'width=450,height=300');
+    if (!printWindow) {
+      alert("Please allow popups to print labels.");
+      return;
+    }
+
+    const now = new Date();
+    const packingDate = now.toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+    const packingTime = now.toLocaleTimeString('en-IN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+
+    const itemPrice = item.price ? `₹${item.price * (item.quantity || 1)}` : 'N/A';
+
+    const labelHtml = `
+      <html>
+        <head>
+          <title>Print Label - ${item.name}</title>
+          <style>
+            @page {
+              size: 80mm 50mm;
+              margin: 0;
+            }
+            body {
+              font-family: 'Courier New', Courier, monospace;
+              width: 80mm;
+              height: 50mm;
+              padding: 3mm 4mm;
+              box-sizing: border-box;
+              margin: 0;
+              background-color: #fff;
+              color: #000;
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
+            }
+            .header {
+              text-align: center;
+              font-size: 13px;
+              font-weight: 1000;
+              border-bottom: 1.5px dashed #000;
+              padding-bottom: 2px;
+              margin-bottom: 3px;
+            }
+            .product-name {
+              font-size: 13px;
+              font-weight: 1000;
+              margin: 2px 0;
+              word-wrap: break-word;
+              text-transform: uppercase;
+              line-height: 1.2;
+            }
+            .details {
+              font-size: 10.5px;
+              line-height: 1.25;
+            }
+            .row {
+              display: flex;
+              justify-content: space-between;
+            }
+            .footer {
+              border-top: 1.5px dashed #000;
+              padding-top: 2.5px;
+              margin-top: 3.5px;
+              font-size: 11.5px;
+              text-align: center;
+              font-weight: 1000;
+            }
+            .bold {
+              font-weight: 1000;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">MANA WARANGAL FOODS</div>
+          <div class="product-name">${item.name}</div>
+          <div class="details">
+            <div class="row">
+              <span>CUSTOMER:</span>
+              <span class="bold">${(order.customerName || 'N/A').toUpperCase()}</span>
+            </div>
+            <div class="row">
+              <span>WEIGHT:</span>
+              <span class="bold">${(item.weight || '1 PACK').toUpperCase()}</span>
+            </div>
+            <div class="row">
+              <span>PRICE:</span>
+              <span class="bold">${itemPrice}</span>
+            </div>
+            <div class="row">
+              <span>ORDER ID:</span>
+              <span class="bold">#${order.id.slice(-8).toUpperCase()}</span>
+            </div>
+          </div>
+          <div class="footer">
+            PACKED: ${packingDate} ${packingTime}
+          </div>
+          <script>
+            window.onload = function() {
+              window.print();
+              setTimeout(function() { window.close(); }, 500);
+            };
+          </script>
+        </body>
+      </html>
+    `;
+
+    printWindow.document.open();
+    printWindow.document.write(labelHtml);
+    printWindow.document.close();
+  };
+
   const handleExportCSV = () => {
     const exportOrders = orders.filter(order => order.status !== 'pending_payment');
     if (exportOrders.length === 0) {
@@ -303,7 +422,7 @@ export const Orders = () => {
       </div>
 
       {/* Order Cards List */}
-      {loading ? (
+      {loading && orders.length === 0 ? (
         <Loader />
       ) : filteredOrders.length === 0 ? (
         <div className="p-16 bg-white border border-neutral-border rounded-3xl text-center flex flex-col items-center justify-center gap-3">
@@ -427,11 +546,25 @@ export const Orders = () => {
                               ) : (
                                 <span className="w-1.5 h-1.5 rounded-full bg-neutral-dark/30" />
                               )}
-                              <span className={isChecked && canVerify ? 'line-through opacity-55 text-neutral-dark/65' : ''}>
-                                {item.name} <span className="opacity-55 text-[10px] ml-1 font-extrabold">x{item.quantity}</span>
+                              <span className={`${isChecked && canVerify ? 'line-through opacity-55 text-neutral-dark/65' : ''} flex flex-col items-start`}>
+                                <span>{item.name} <span className="opacity-55 text-[10px] ml-1 font-extrabold">x{item.quantity}</span></span>
+                                {item.cuttingType && (
+                                  <span className="text-[9px] text-[#8B0000] font-black uppercase mt-0.5">
+                                    ✂️ {item.cuttingType}
+                                  </span>
+                                )}
                               </span>
                             </div>
-                            <span className="text-neutral-dark/60 text-[10px] font-semibold">{item.weight || '1 Pack'}</span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-neutral-dark/60 text-[10px] font-semibold">{item.weight || '1 Pack'}</span>
+                              <button
+                                onClick={() => handlePrintLabel(order, item)}
+                                className="px-2 py-0.5 bg-neutral-light hover:bg-[#8B0000]/10 hover:text-[#8B0000] border border-neutral-border text-neutral-dark/70 rounded-md text-[9px] font-black uppercase tracking-wider transition-all duration-200 cursor-pointer flex items-center gap-1 active:scale-95"
+                                title="Print Label"
+                              >
+                                🖨️ Label
+                              </button>
+                            </div>
                           </div>
                         );
                       })}

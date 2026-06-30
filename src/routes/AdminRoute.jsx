@@ -10,7 +10,7 @@ export const AdminRoute = () => {
     return <Loader fullPage={true} />;
   }
 
-  const isAdmin = currentUser && currentUser.role === 'admin';
+  const isAdmin = currentUser && (currentUser.role === 'admin' || currentUser.role === 'super_admin');
 
   return isAdmin ? <Outlet /> : <Navigate to="/home" replace={true} />;
 };

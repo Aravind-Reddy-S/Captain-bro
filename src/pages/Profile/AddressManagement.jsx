@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { loadState, saveState } from '../../utils/helpers';
+import { saveAddressDb, getAddressesDb, deleteAddressDb } from '../../firebase/database';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import Modal from '../../components/common/Modal';
+import Loader from '../../components/common/Loader';
 import { FaMapMarkerAlt, FaPlus, FaTrash, FaCheck, FaHome, FaBriefcase, FaMap } from 'react-icons/fa';
 
 export const AddressManagement = () => {
@@ -12,6 +13,7 @@ export const AddressManagement = () => {
   const { currentUser } = useAuth();
   
   const [addresses, setAddresses] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
 
@@ -22,17 +24,22 @@ export const AddressManagement = () => {
   const [landmark, setLandmark] = useState('');
   const [type, setType] = useState('Home'); // Home, Work, Other
 
-  const userKey = currentUser ? `addresses_${currentUser.uid}` : 'addresses_guest';
+  const fetchAddresses = async () => {
+    if (!currentUser) return;
+    setLoading(true);
+    try {
+      const list = await getAddressesDb(currentUser.uid);
+      setAddresses(list);
+    } catch (err) {
+      console.error('Failed to load addresses:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // Load addresses from local state
-    setAddresses(loadState(userKey, []));
+    fetchAddresses();
   }, [currentUser]);
-
-  const saveAddressesToDb = (newAddresses) => {
-    setAddresses(newAddresses);
-    saveState(userKey, newAddresses);
-  };
 
   const openAddModal = () => {
     setEditingAddress(null);
@@ -54,48 +61,68 @@ export const AddressManagement = () => {
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this address?')) {
-      const updated = addresses.filter(a => a.id !== id);
-      saveAddressesToDb(updated);
+      setLoading(true);
+      try {
+        await deleteAddressDb(id);
+        setAddresses(prev => prev.filter(a => a.id !== id));
+      } catch (err) {
+        alert("Failed to delete address: " + err.message);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
-  const handleSetDefault = (id) => {
-    const updated = addresses.map(a => ({
-      ...a,
-      isDefault: a.id === id
-    }));
-    saveAddressesToDb(updated);
+  const handleSetDefault = async (id) => {
+    setLoading(true);
+    try {
+      const updatedList = await Promise.all(
+        addresses.map(async (a) => {
+          const updated = { ...a, isDefault: a.id === id };
+          await saveAddressDb(currentUser.uid, updated);
+          return updated;
+        })
+      );
+      setAddresses(updatedList);
+    } catch (err) {
+      alert("Failed to set default address: " + err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!addressLine.trim()) return;
+    if (!addressLine.trim() || !currentUser) return;
 
-    let updatedList;
-    if (editingAddress) {
-      updatedList = addresses.map(a => 
-        a.id === editingAddress.id 
-          ? { ...a, name, phone, addressLine, landmark, type } 
-          : a
-      );
-    } else {
+    setLoading(true);
+    try {
       const isFirst = addresses.length === 0;
-      const newAddr = {
-        id: 'addr_' + Math.random().toString(36).substr(2, 9),
+      const addrData = {
+        id: editingAddress ? editingAddress.id : ('addr_' + Math.random().toString(36).substr(2, 9)),
         name,
         phone,
         addressLine,
         landmark,
         type,
-        isDefault: isFirst
+        isDefault: editingAddress ? editingAddress.isDefault : isFirst
       };
-      updatedList = [...addresses, newAddr];
+      
+      const saved = await saveAddressDb(currentUser.uid, addrData);
+      
+      if (editingAddress) {
+        setAddresses(prev => prev.map(a => a.id === editingAddress.id ? saved : a));
+      } else {
+        setAddresses(prev => [...prev, saved]);
+      }
+      setIsModalOpen(false);
+    } catch (err) {
+      alert("Failed to save address: " + err.message);
+    } finally {
+      setLoading(false);
     }
-
-    saveAddressesToDb(updatedList);
-    setIsModalOpen(false);
   };
 
   const getAddressIcon = (addressType) => {
@@ -118,7 +145,9 @@ export const AddressManagement = () => {
         </Button>
       </div>
 
-      {addresses.length === 0 ? (
+      {loading && addresses.length === 0 ? (
+        <Loader />
+      ) : addresses.length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center p-8 text-center animate-float">
           <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center text-neutral-dark/40 text-xl border border-neutral-border mb-4">
             <FaMapMarkerAlt />
