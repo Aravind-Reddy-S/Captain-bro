@@ -20,6 +20,7 @@ const Login = lazy(() => import('../pages/Auth/Login'));
 const Register = lazy(() => import('../pages/Auth/Register'));
 const ForgotPassword = lazy(() => import('../pages/Auth/ForgotPassword'));
 const NotFound = lazy(() => import('../pages/NotFound/NotFound'));
+const Seed = lazy(() => import('../pages/Seed'));
 
 // Customer Pages (Lazy)
 const Home = lazy(() => import('../pages/Home/Home'));
@@ -67,6 +68,7 @@ export const AppRoutes = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/seed" element={<Seed />} />
 
             {/* Public Customer Routes */}
             <Route path="/home" element={<Home />} />

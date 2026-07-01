@@ -91,7 +91,14 @@ export const createUserProfileDb = async (uid, profileData) => {
     localStorage.setItem('mock_users', JSON.stringify(users));
     return profile;
   } else {
-    await setDoc(doc(db, 'users', uid), profile);
+    // Add a timeout to catch uninitialized Firestore databases hanging indefinitely
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Database connection timed out. Please ensure you have created a Firestore Database in your Firebase Console.")), 8000)
+    );
+    await Promise.race([
+      setDoc(doc(db, 'users', uid), profile),
+      timeoutPromise
+    ]);
     return profile;
   }
 };

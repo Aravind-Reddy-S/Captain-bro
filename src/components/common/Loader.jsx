@@ -1,4 +1,5 @@
 import React from 'react';
+import LogoImg from '../../assets/images/captain-bro-face-pack.png';
 
 export const Loader = ({ fullPage = false }) => {
   const loaderEl = (
@@ -6,9 +7,7 @@ export const Loader = ({ fullPage = false }) => {
       <div className="relative w-16 h-16">
         <div className="absolute inset-0 rounded-full border-4 border-primary/10"></div>
         <div className="absolute inset-0 rounded-full border-4 border-t-primary animate-spin"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl animate-pulse">
-          🍗
-        </div>
+        <img src={LogoImg} alt="Logo" className="absolute top-1/2 left-1/2 w-12 h-12 -translate-x-1/2 -translate-y-1/2" />
       </div>
       <p className="text-sm font-semibold text-neutral-dark opacity-60">
         Fetching fresh items...

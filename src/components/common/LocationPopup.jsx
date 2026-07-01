@@ -24,22 +24,25 @@ export const LocationPopup = ({ isOpen, onClose }) => {
     }
   }, [isOpen, currentUser]);
 
-  const handleDetectLocation = () => {
+  const handleDetectLocation = async () => {
     setDetecting(true);
     setDetectError('');
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          // Success - simulating reverse geocoding to a nice Warangal address
-          const mockAddresses = [
-            "H.No 12-4-23, Subedari, Hanamkonda, Warangal, 506001",
-            "Plot 55, Hunter Road, Naimnagar, Hanamkonda, Warangal, 506002",
-            "Flat 202, Sri Sai Residency, Kazipet, Warangal, 506003",
-            "H.No 1-8-344, Naimnagar, Hanamkonda, Warangal, 506001"
-          ];
-          const randomAddress = mockAddresses[Math.floor(Math.random() * mockAddresses.length)];
-          setAddressLine(randomAddress);
-          setLandmark("Detected via GPS");
+        async (position) => {
+          // Success - get real address via Google Maps Geocoding API
+          const { latitude, longitude } = position.coords;
+          try {
+            const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}`);
+            const data = await response.json();
+            const formatted = data.results?.[0]?.formatted_address || `${latitude}, ${longitude}`;
+            setAddressLine(formatted);
+            setLandmark('Detected via GPS');
+          } catch (apiError) {
+            console.error('Geocoding API error', apiError);
+            setAddressLine(`${latitude}, ${longitude}`);
+            setLandmark('Detected via GPS');
+          }
           setDetecting(false);
         },
         (error) => {
